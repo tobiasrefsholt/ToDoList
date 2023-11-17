@@ -1,34 +1,66 @@
-using System.Data;
-using System.Data.SqlClient;
-using Data;
-using MySql.Data;
-using MySql.Data.MySqlClient;
-
 namespace ToDoList;
 
 public class User
 {
     private string? _username = null;
     private string? _password = null;
-    private int? _userId = null;
+    public int? UserId { get; private set; }
 
     public void AuthenticateUser()
     {
-        var dbCon = Database.Instance();
-        if (!dbCon.IsConnect()) return;
-        //suppose col0 and col1 are defined as VARCHAR in the DB
-        var query = $"SELECT id FROM users WHERE username={_username} AND password={_password}";
-        var cmd = new MySqlCommand(query, dbCon.Connection);
-        var reader = cmd.ExecuteReader();
-        while(reader.Read())
+        var dbInstance = new Database(); 
+        dbInstance.CreateConnection();
+        dbInstance.InitializeTables();
+        if (_username != null && _password != null)
         {
-            _userId = reader.GetInt32(0);
-            Console.WriteLine("User ID = " + _userId);
+            UserId = dbInstance.GetUserId(_username, _password);    
         }
-        dbCon.Close();
+        dbInstance.Close();
+        if (UserId != null) return;
+        Console.WriteLine("User not Found. Try again og create an account.");
+    }
+
+    public void CreateUser()
+    {
+        var dbInstance = new Database(); 
+        dbInstance.CreateConnection();
+        dbInstance.InitializeTables();
+        if (_username != null && _password != null)
+        {
+            dbInstance.InsertUser(_username, _password);
+            UserId = dbInstance.GetUserId(_username, _password);
+        }
+        dbInstance.Close();
     }
 
     public void ShowLoginPromt()
+    {
+        Console.WriteLine("Press any key to log in, or press \"C\" to create a new account.");
+        string? input = Console.ReadLine();
+        if (input == null || input.ToLower() != "c")
+        {
+            ShowLogin();
+            return;
+        }
+        ShowRegister();
+    }
+
+    private void ShowRegister()
+    {
+        Console.WriteLine("Register account");
+        Console.Write("Create Username: ");
+        _username = Console.ReadLine();
+        Console.Write("Create Password: ");
+        _password = Console.ReadLine();
+        if (_username == null || _password == null)
+        {
+            Console.WriteLine("Please enter a username and password");
+            return;
+        }
+        CreateUser();
+    }
+
+    private void ShowLogin()
     {
         Console.WriteLine("Please login");
         Console.Write("Username: ");

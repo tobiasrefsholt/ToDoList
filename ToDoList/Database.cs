@@ -1,43 +1,101 @@
-using MySql.Data;
-using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Data.SQLite;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Data;
+namespace ToDoList;
 
-public class Database
+class Database
 {
-    private string _server = "localhost";
-    private string _databaseName = "ToDoList";
-    private string _userName = "admin";
-    private string _password = "";
+    private SQLiteConnection _sqliteConn;
+    private SQLiteConnection _conn;
 
-    public MySqlConnection Connection { get; set; }
-
-    private static Database _instance = null;
-
-    public static Database Instance()
+    public void CreateConnection()
     {
-        if (_instance == null)
-            _instance = new Database();
-        return _instance;
+        if (_conn != null) return;
+        // Create a new database connection:
+        _conn = new SQLiteConnection("Data Source=database.db;Version=3;New=True;Compress=True;");
+        // Open the connection:
+        try
+        {
+            _conn.Open();
+        }
+        catch (Exception ex)
+        {
+            // ignored
+        }
     }
 
-    public bool IsConnect()
+    public void InitializeTables()
     {
-        if (Connection == null)
+        CreateConnection();
+        const string usersTableSql = "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT, username VARCHAR(255), password VARCHAR(255))";
+        const string tasksTableSql = "CREATE TABLE IF NOT EXISTS tasks (id INT AUTO_INCREMENT, user_id INT, title VARCHAR(255), description VARCHAR(255), date DATETIME, due_date DATETIME)";
+        var sqliteCmd = _conn.CreateCommand();
+        sqliteCmd.CommandText = usersTableSql;
+        sqliteCmd.ExecuteNonQuery();
+        sqliteCmd.CommandText = tasksTableSql;
+        sqliteCmd.ExecuteNonQuery();
+    }
+
+    public void InsertUser(string username, string password)
+    {
+        CreateConnection();
+        var insertSql = new SQLiteCommand("INSERT INTO users (username, password) VALUES (?,?)", _conn);
+        insertSql.Parameters.AddWithValue("username", username);
+        insertSql.Parameters.AddWithValue("password", password);
+        insertSql.ExecuteNonQuery();
+    }
+    
+    public void InsertTask(int userId, string title, string description, string date, string dueDate)
+    {
+        InsertData("INSERT INTO tasks (user_id, title, description, date, due_date) VALUES (userId, title, description, date, dueDate)");
+    }
+
+    private void InsertData(string sql)
+    {
+        CreateConnection();
+        var sqliteCmd = _conn.CreateCommand();
+        sqliteCmd.CommandText = sql;
+        sqliteCmd.ExecuteNonQuery();
+    }
+
+    public int? GetUserId(string username, string password)
+    {
+        return ReadIntData("SELECT id FROM users WHERE username='" + username + "' AND password='" + password + "'");
+    }
+
+    private int? ReadIntData(string sql)
+    {
+        CreateConnection();
+        var sqliteCmd = _conn.CreateCommand();
+        sqliteCmd.CommandText = sql;
+        var sqliteDatareader = sqliteCmd.ExecuteReader();
+        while (sqliteDatareader.Read())
         {
-            if (String.IsNullOrEmpty(_databaseName))
-                return false;
-            string connstring = string.Format("Server={0}; database={1}; UID={2}; password={3}", _server, _databaseName,
-                _userName, _password);
-            Connection = new MySqlConnection(connstring);
-            Connection.Open();
+            return sqliteDatareader.GetInt32(0);
+        }
+        return null;
+    }
+
+    private void ReadStringData(string sql, string table)
+    {
+        var sqliteCmd = _conn.CreateCommand();
+        sqliteCmd.CommandText = $"SELECT * FROM {table}";
+
+        var sqliteDatareader = sqliteCmd.ExecuteReader();
+        while (sqliteDatareader.Read())
+        {
+            var myreader = sqliteDatareader.GetString(0);
+            Console.WriteLine(myreader);
         }
 
-        return true;
+        _conn.Close();
     }
-
     public void Close()
     {
-        Connection.Close();
+        _conn.Close();
     }
 }
