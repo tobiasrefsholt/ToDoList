@@ -12,25 +12,23 @@ public class User
     private string? _password = null;
     private int? _userId = null;
 
-    public void authenticateUser()
+    public void AuthenticateUser()
     {
         var dbCon = Database.Instance();
-        if (dbCon.IsConnect())
+        if (!dbCon.IsConnect()) return;
+        //suppose col0 and col1 are defined as VARCHAR in the DB
+        var query = $"SELECT id FROM users WHERE username={_username} AND password={_password}";
+        var cmd = new MySqlCommand(query, dbCon.Connection);
+        var reader = cmd.ExecuteReader();
+        while(reader.Read())
         {
-            //suppose col0 and col1 are defined as VARCHAR in the DB
-            var query = $"SELECT id FROM users WHERE username={_username} AND password={_password}";
-            var cmd = new MySqlCommand(query, dbCon.Connection);
-            var reader = cmd.ExecuteReader();
-            while(reader.Read())
-            {
-                _userId = reader.GetInt32(0);
-                Console.WriteLine("User ID = " + _userId);
-            }
-            dbCon.Close();
+            _userId = reader.GetInt32(0);
+            Console.WriteLine("User ID = " + _userId);
         }
+        dbCon.Close();
     }
 
-    public void showLoginPromt()
+    public void ShowLoginPromt()
     {
         Console.WriteLine("Please login");
         Console.Write("Username: ");
