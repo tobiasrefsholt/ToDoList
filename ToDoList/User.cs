@@ -16,7 +16,10 @@ public class User
         {
             UserId = dbInstance.GetIdByUsername(_username);
             var hash = dbInstance.GetPasswordHash(_username);
-            IsAuthenticated = PasswordHash.ValidatePassword(_password, hash);
+            if (hash != null)
+            {
+                IsAuthenticated = PasswordHash.ValidatePassword(_password, hash);
+            }
         }
 
         dbInstance.Close();
