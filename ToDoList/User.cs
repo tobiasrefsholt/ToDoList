@@ -13,7 +13,9 @@ public class User
         dbInstance.InitializeTables();
         if (_username != null && _password != null)
         {
-            UserId = dbInstance.GetUserId(_username, _password);    
+            UserId = dbInstance.GetUserId(_username, _password);
+            Console.Clear();
+            Console.WriteLine($"Hello, {_username}. You're logged in!");
         }
         dbInstance.Close();
         if (UserId != null) return;
