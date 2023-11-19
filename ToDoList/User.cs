@@ -4,34 +4,45 @@ public class User
 {
     private string? _username = null;
     private string? _password = null;
+    public bool IsAuthenticated { get; private set; }
     public int? UserId { get; private set; }
 
     public void AuthenticateUser()
     {
-        var dbInstance = new Database(); 
+        var dbInstance = new Database();
         dbInstance.CreateConnection();
         dbInstance.InitializeTables();
         if (_username != null && _password != null)
         {
-            UserId = dbInstance.GetUserId(_username, _password);
-            Console.Clear();
-            Console.WriteLine($"Hello, {_username}. You're logged in!");
+            UserId = dbInstance.GetIdByUsername(_username);
+            var hash = dbInstance.GetPasswordHash(_username);
+            IsAuthenticated = PasswordHash.ValidatePassword(_password, hash);
         }
+
         dbInstance.Close();
-        if (UserId != null) return;
-        Console.WriteLine("User not Found. Try again og create an account.");
+        Console.Clear();
+        if (IsAuthenticated)
+        {
+            Console.WriteLine($"Hello, {_username}. You're logged in!");
+            return;
+        }
+
+        Console.WriteLine("Wrong username or password. Try again og create an account.");
     }
 
-    public void CreateUser()
+    public void CreateUser(string? username, string? password)
     {
-        var dbInstance = new Database(); 
+        var dbInstance = new Database();
         dbInstance.CreateConnection();
         dbInstance.InitializeTables();
-        if (_username != null && _password != null)
+        if (username != null && password != null)
         {
+            _username = username;
+            _password = PasswordHash.CreateHash(password);
             dbInstance.InsertUser(_username, _password);
-            UserId = dbInstance.GetUserId(_username, _password);
+            UserId = dbInstance.GetIdByUsername(_username);
         }
+
         dbInstance.Close();
     }
 
@@ -44,6 +55,7 @@ public class User
             ShowLogin();
             return;
         }
+
         ShowRegister();
     }
 
@@ -51,15 +63,16 @@ public class User
     {
         Console.WriteLine("Register account");
         Console.Write("Create Username: ");
-        _username = Console.ReadLine();
+        var username = Console.ReadLine();
         Console.Write("Create Password: ");
-        _password = Console.ReadLine();
-        if (_username == null || _password == null)
+        var password = Console.ReadLine();
+        if (username == null || password == null)
         {
             Console.WriteLine("Please enter a username and password");
             return;
         }
-        CreateUser();
+
+        CreateUser(username, password);
     }
 
     private void ShowLogin()

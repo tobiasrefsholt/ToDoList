@@ -62,9 +62,9 @@ class Database
         sqliteCmd.ExecuteNonQuery();
     }
 
-    public int? GetUserId(string username, string password)
+    public int? GetIdByUsername(string username)
     {
-        return ReadIntData("SELECT id FROM users WHERE username='" + username + "' AND password='" + password + "'");
+        return ReadIntData("SELECT id FROM users WHERE username='" + username + "'");
     }
 
     private int? ReadIntData(string sql)
@@ -80,19 +80,22 @@ class Database
         return null;
     }
 
-    private void ReadStringData(string sql, string table)
+    public string? GetPasswordHash(string username)
+    {
+        return ReadStringData("SELECT password FROM users WHERE username='" + username + "'");
+    }
+
+    private string? ReadStringData(string sql)
     {
         var sqliteCmd = _conn.CreateCommand();
-        sqliteCmd.CommandText = $"SELECT * FROM {table}";
+        sqliteCmd.CommandText = sql;
 
         var sqliteDatareader = sqliteCmd.ExecuteReader();
         while (sqliteDatareader.Read())
         {
-            var myreader = sqliteDatareader.GetString(0);
-            Console.WriteLine(myreader);
+            return sqliteDatareader.GetString(0);
         }
-
-        _conn.Close();
+        return null;
     }
     public void Close()
     {

@@ -5,7 +5,7 @@ class Program
     private static void Main()
     {
         var user = new User();
-        while (user.UserId == null)
+        while (!user.IsAuthenticated)
         {
             user.ShowLoginPromt();
             user.AuthenticateUser();
