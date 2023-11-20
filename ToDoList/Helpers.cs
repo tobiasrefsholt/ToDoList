@@ -1,3 +1,6 @@
+using System.Dynamic;
+using System.Security.Cryptography.X509Certificates;
+
 namespace ToDoList;
 
 public class Helpers
@@ -18,5 +21,28 @@ public class Helpers
         }
 
         return result;
+    }
+
+    public static string AskForString(string label, bool required)
+    {
+        Console.Write(label);
+        var input = Console.ReadLine();
+
+        if (!string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        if (!required) return string.Empty;
+
+        Console.WriteLine("This field is required, please enter a valid input.");
+        return AskForString(label, required);
+    }
+
+    public static bool AskForBool(string label)
+    {
+        Console.Write(label + "(Y/n)");
+        var input = Console.ReadLine();
+        return string.IsNullOrEmpty(input) || input.ToLower() == "y";
     }
 }
