@@ -54,7 +54,14 @@ public class Pages
 
     public static void ShowAddTask()
     {
-        throw new NotImplementedException();
+        Console.Clear();
+        Console.WriteLine("Add task:");
+        var title = Helpers.AskForString("Title: ", true);
+        var description = Helpers.AskForString("Description: ", false);
+        var dueDate = Helpers.AskForString("Due date (yyyy-mm-dd)", false);
+        Console.WriteLine($"Do you want to add a task with title \"{title}\", description \"{description}\" and due date \"{dueDate}\"?");
+        var addTask = Helpers.AskForBool("Continue?");
+        if (!addTask) return;
     }
 
     public static void ShowManageAccount()
