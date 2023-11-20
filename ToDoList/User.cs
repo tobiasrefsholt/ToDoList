@@ -86,4 +86,13 @@ public class User
         Console.Write("Password: ");
         _password = Console.ReadLine();
     }
+
+    public void Logout()
+    {
+        IsAuthenticated = false;
+        UserId = null;
+        _username = null;
+        _password = null;
+        Console.Write("Successfully logged out.");
+    }
 }
