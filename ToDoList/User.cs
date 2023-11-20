@@ -93,6 +93,5 @@ public class User
         UserId = null;
         _username = null;
         _password = null;
-        Console.Write("Successfully logged out.");
     }
 }

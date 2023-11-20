@@ -32,6 +32,9 @@ public class Pages
                 break;
             case 5:
                 user.Logout();
+                Console.Clear();
+                Console.WriteLine("Successfully logged out.");
+                Program.Main();
                 break;
             default:
                 ShowMainMenu(user);

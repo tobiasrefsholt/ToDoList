@@ -3,7 +3,7 @@ using ToDoList;
 
 class Program
 {
-    private static void Main()
+    public static void Main()
     {
         var user = new User();
         while (!user.IsAuthenticated)
