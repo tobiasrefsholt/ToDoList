@@ -1,104 +1,97 @@
-using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ToDoList;
 
-class Database
+public class Database
 {
-    private SQLiteConnection _sqliteConn;
-    private SQLiteConnection _conn;
+    private const string ConnectionString = "Data Source=database.db;Version=3;New=True;Compress=True;";
 
-    public void CreateConnection()
+    public Database()
     {
-        if (_conn != null) return;
-        // Create a new database connection:
-        _conn = new SQLiteConnection("Data Source=database.db;Version=3;New=True;Compress=True;");
-        // Open the connection:
-        try
-        {
-            _conn.Open();
-        }
-        catch (Exception ex)
-        {
-            // ignored
-        }
+        InitializeTables();
     }
 
-    public void InitializeTables()
+    private void InitializeTables()
     {
-        CreateConnection();
-        const string usersTableSql = "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT, username VARCHAR(255), password VARCHAR(255))";
-        const string tasksTableSql = "CREATE TABLE IF NOT EXISTS tasks (id INT AUTO_INCREMENT, user_id INT, title VARCHAR(255), description VARCHAR(255), date DATETIME, due_date DATETIME)";
-        var sqliteCmd = _conn.CreateCommand();
-        sqliteCmd.CommandText = usersTableSql;
-        sqliteCmd.ExecuteNonQuery();
-        sqliteCmd.CommandText = tasksTableSql;
-        sqliteCmd.ExecuteNonQuery();
+        var usersTableSql = new SQLiteCommand(
+            "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT, username VARCHAR(255), password VARCHAR(255))");
+        var tasksTableSql = new SQLiteCommand(
+            "CREATE TABLE IF NOT EXISTS tasks (id INT AUTO_INCREMENT, user_id INT, title VARCHAR(255), description VARCHAR(255), date DATETIME, due_date DATETIME)");
+        Insert(usersTableSql);
+        Insert(tasksTableSql);
+    }
+
+    private void Insert(SQLiteCommand command)
+    {
+        using var c = new SQLiteConnection(ConnectionString);
+        c.Open();
+        command.Connection = c;
+        command.ExecuteNonQuery();
+    }
+
+    private string Read(SQLiteCommand command)
+    {
+        using var c = new SQLiteConnection(ConnectionString);
+        c.Open();
+        command.Connection = c;
+        using var rdr = command.ExecuteReader();
+        var response = string.Empty;
+        while (rdr.Read())
+        {
+            response = rdr.GetString(0);
+            break;
+        }
+
+        return response;
+    }
+
+    private int? ReadInt(SQLiteCommand command)
+    {
+        using var c = new SQLiteConnection(ConnectionString);
+        c.Open();
+        command.Connection = c;
+        using var rdr = command.ExecuteReader();
+        int? response = null;
+        while (rdr.Read())
+        {
+            response = rdr.GetInt32(0);
+            break;
+        }
+
+        return response;
     }
 
     public void InsertUser(string username, string password)
     {
-        CreateConnection();
-        var insertSql = new SQLiteCommand("INSERT INTO users (username, password) VALUES (?,?)", _conn);
-        insertSql.Parameters.AddWithValue("username", username);
-        insertSql.Parameters.AddWithValue("password", password);
-        insertSql.ExecuteNonQuery();
-    }
-    
-    public void InsertTask(int userId, string title, string description, string date, string dueDate)
-    {
-        InsertData("INSERT INTO tasks (user_id, title, description, date, due_date) VALUES (userId, title, description, date, dueDate)");
+        var command = new SQLiteCommand("INSERT INTO users (username, password) VALUES (?,?)");
+        command.Parameters.AddWithValue("username", username);
+        command.Parameters.AddWithValue("password", password);
+        Insert(command);
     }
 
-    private void InsertData(string sql)
+    public void InsertTask(Task task)
     {
-        CreateConnection();
-        var sqliteCmd = _conn.CreateCommand();
-        sqliteCmd.CommandText = sql;
-        sqliteCmd.ExecuteNonQuery();
+        var command =
+            new SQLiteCommand("INSERT INTO tasks (user_id, title, description, date, due_date) VALUES (?,?,?,?,?)");
+        command.Parameters.AddWithValue("user_id", task.UserId);
+        command.Parameters.AddWithValue("title", task.Title);
+        command.Parameters.AddWithValue("description", task.Description);
+        command.Parameters.AddWithValue("date", task.Date);
+        command.Parameters.AddWithValue("due_date", task.DueDate);
+        Insert(command);
     }
 
     public int? GetIdByUsername(string username)
     {
-        return ReadIntData("SELECT id FROM users WHERE username='" + username + "'");
+        var command = new SQLiteCommand("SELECT rowid FROM users WHERE username LIKE @username");
+        command.Parameters.AddWithValue("@username", username);
+        return ReadInt(command);
     }
 
-    private int? ReadIntData(string sql)
+    public string GetPasswordHash(string username)
     {
-        CreateConnection();
-        var sqliteCmd = _conn.CreateCommand();
-        sqliteCmd.CommandText = sql;
-        var sqliteDatareader = sqliteCmd.ExecuteReader();
-        while (sqliteDatareader.Read())
-        {
-            return sqliteDatareader.GetInt32(0);
-        }
-        return null;
-    }
-
-    public string? GetPasswordHash(string username)
-    {
-        return ReadStringData("SELECT password FROM users WHERE username='" + username + "'");
-    }
-
-    private string? ReadStringData(string sql)
-    {
-        var sqliteCmd = _conn.CreateCommand();
-        sqliteCmd.CommandText = sql;
-
-        var sqliteDatareader = sqliteCmd.ExecuteReader();
-        while (sqliteDatareader.Read())
-        {
-            return sqliteDatareader.GetString(0);
-        }
-        return null;
-    }
-    public void Close()
-    {
-        _conn.Close();
+        var command = new SQLiteCommand("SELECT password FROM users WHERE username LIKE @username");
+        command.Parameters.AddWithValue("@username", username);
+        return Read(command);
     }
 }

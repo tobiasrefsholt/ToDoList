@@ -13,7 +13,7 @@ public class Pages
         var selected = Helpers.AskForInt();
         SelectMenuItem(selected, user);
     }
-    
+
     private static void SelectMenuItem(int selected, User user)
     {
         switch (selected)
@@ -25,7 +25,7 @@ public class Pages
                 ShowFinishedTasks();
                 break;
             case 3:
-                ShowAddTask();
+                ShowAddTask(user);
                 break;
             case 4:
                 ShowManageAccount();
@@ -41,30 +41,34 @@ public class Pages
                 break;
         }
     }
-    
-    public static void ShowTodaysTasks()
+
+    private static void ShowTodaysTasks()
     {
         throw new NotImplementedException();
     }
 
-    public static void ShowFinishedTasks()
+    private static void ShowFinishedTasks()
     {
         throw new NotImplementedException();
     }
 
-    public static void ShowAddTask()
+    private static void ShowAddTask(User user)
     {
         Console.Clear();
         Console.WriteLine("Add task:");
         var title = Helpers.AskForString("Title: ", true);
         var description = Helpers.AskForString("Description: ", false);
-        var dueDate = Helpers.AskForString("Due date (yyyy-mm-dd)", false);
-        Console.WriteLine($"Do you want to add a task with title \"{title}\", description \"{description}\" and due date \"{dueDate}\"?");
+        var dueDateInput = Helpers.AskForString("Due date (yyyy-mm-dd)", false);
+        DateTime? dueDate = (dueDateInput.Length == 10) ? Convert.ToDateTime(dueDateInput) : null;
+        Console.WriteLine(
+            $"Do you want to add a task with title \"{title}\", description \"{description}\" and due date \"{dueDate}\"?");
         var addTask = Helpers.AskForBool("Continue?");
-        if (!addTask) return;
+        if (!addTask || user.UserId == null) return;
+        var db = new Database();
+        db.InsertTask(new Task(user.UserId.Value, title, description, dueDate));
     }
 
-    public static void ShowManageAccount()
+    private static void ShowManageAccount()
     {
         throw new NotImplementedException();
     }

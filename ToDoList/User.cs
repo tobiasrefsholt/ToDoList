@@ -2,27 +2,20 @@ namespace ToDoList;
 
 public class User
 {
-    private string? _username = null;
-    private string? _password = null;
+    private string? _username;
+    private string? _password;
     public bool IsAuthenticated { get; private set; }
     public int? UserId { get; private set; }
 
-    public void AuthenticateUser()
+    public void AuthenticateUser(Database database)
     {
-        var dbInstance = new Database();
-        dbInstance.CreateConnection();
-        dbInstance.InitializeTables();
         if (_username != null && _password != null)
         {
-            UserId = dbInstance.GetIdByUsername(_username);
-            var hash = dbInstance.GetPasswordHash(_username);
-            if (hash != null)
-            {
-                IsAuthenticated = PasswordHash.ValidatePassword(_password, hash);
-            }
+            UserId = database.GetIdByUsername(_username);
+            var hash = database.GetPasswordHash(_username);
+            IsAuthenticated = PasswordHash.ValidatePassword(_password, hash);
         }
 
-        dbInstance.Close();
         Console.Clear();
         if (IsAuthenticated)
         {
@@ -33,27 +26,20 @@ public class User
         Console.WriteLine("Wrong username or password. Try again og create an account.");
     }
 
-    public void CreateUser(string? username, string? password)
+    private void CreateUser()
     {
         var dbInstance = new Database();
-        dbInstance.CreateConnection();
-        dbInstance.InitializeTables();
-        if (username != null && password != null)
-        {
-            _username = username;
-            _password = PasswordHash.CreateHash(password);
-            dbInstance.InsertUser(_username, _password);
-            UserId = dbInstance.GetIdByUsername(_username);
-        }
-
-        dbInstance.Close();
+        if (_username == null || _password == null) return;
+        var hash = PasswordHash.CreateHash(_password);
+        dbInstance.InsertUser(_username, hash);
+        UserId = dbInstance.GetIdByUsername(_username);
     }
 
-    public void ShowLoginPromt()
+    public void ShowLoginPrompt()
     {
         Console.WriteLine("Press any key to log in, or press \"C\" to create a new account.");
-        string? input = Console.ReadLine();
-        if (input == null || input.ToLower() != "c")
+        var input = Console.ReadKey().KeyChar;
+        if (input != 'c' && input != 'C')
         {
             ShowLogin();
             return;
@@ -66,16 +52,16 @@ public class User
     {
         Console.WriteLine("Register account");
         Console.Write("Create Username: ");
-        var username = Console.ReadLine();
+        _username = Console.ReadLine();
         Console.Write("Create Password: ");
-        var password = Console.ReadLine();
-        if (username == null || password == null)
+        _password = Console.ReadLine();
+        if (_username == null || _password == null)
         {
             Console.WriteLine("Please enter a username and password");
             return;
         }
 
-        CreateUser(username, password);
+        CreateUser();
     }
 
     private void ShowLogin()
