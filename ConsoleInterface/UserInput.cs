@@ -1,4 +1,4 @@
-namespace ToDoList;
+namespace ConsoleInterface;
 
 public class UserInput
 {

@@ -1,4 +1,7 @@
-namespace ToDoList;
+using ToDoList;
+using Task = ToDoList.Task;
+
+namespace ConsoleInterface;
 
 public class TerminalView
 {
