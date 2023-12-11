@@ -1,6 +1,6 @@
 namespace ToDoList;
 
-public class Helpers
+public class UserInput
 {
     public static int AskForInt()
     {
