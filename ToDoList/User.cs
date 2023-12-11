@@ -7,7 +7,7 @@ public class User
     public bool IsAuthenticated { get; private set; }
     public int? UserId { get; private set; }
 
-    public void AuthenticateUser(Database database)
+    public void Authenticate(Database database)
     {
         if (_username != null && _password != null)
         {

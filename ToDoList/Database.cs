@@ -14,9 +14,9 @@ public class Database
     private void InitializeTables()
     {
         var usersTableSql = new SQLiteCommand(
-            "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT, username VARCHAR(255), password VARCHAR(255))");
+            "CREATE TABLE IF NOT EXISTS users (username VARCHAR(255), password VARCHAR(255))");
         var tasksTableSql = new SQLiteCommand(
-            "CREATE TABLE IF NOT EXISTS tasks (id INT AUTO_INCREMENT, user_id INT, title VARCHAR(255), description VARCHAR(255), date DATETIME, due_date DATETIME)");
+            "CREATE TABLE IF NOT EXISTS tasks (user_id INT, title VARCHAR(255), description VARCHAR(255), date DATETIME, due_date DATETIME)");
         Insert(usersTableSql);
         Insert(tasksTableSql);
     }
