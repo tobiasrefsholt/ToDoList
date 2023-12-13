@@ -13,7 +13,7 @@ public class User
         {
             UserId = database.GetIdByUsername(_username);
             var hash = database.GetPasswordHash(_username);
-            IsAuthenticated = PasswordHash.ValidatePassword(_password, hash);
+            IsAuthenticated = !string.IsNullOrEmpty(hash) && PasswordHash.ValidatePassword(_password, hash);
         }
 
         Console.Clear();
@@ -23,7 +23,7 @@ public class User
             return;
         }
 
-        Console.WriteLine("Wrong username or password. Try again og create an account.");
+        Console.WriteLine("Wrong username or password. Try again or create an account.");
     }
 
     private void CreateUser()
@@ -33,6 +33,7 @@ public class User
         var hash = PasswordHash.CreateHash(_password);
         dbInstance.InsertUser(_username, hash);
         UserId = dbInstance.GetIdByUsername(_username);
+        IsAuthenticated = true;
     }
 
     public void ShowLoginPrompt()

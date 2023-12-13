@@ -64,20 +64,21 @@ public class Database
     public void InsertUser(string username, string password)
     {
         var command = new SQLiteCommand("INSERT INTO users (username, password) VALUES (?,?)");
-        command.Parameters.AddWithValue("username", username);
-        command.Parameters.AddWithValue("password", password);
+        command.Parameters.AddWithValue(null, username);
+        command.Parameters.AddWithValue(null, password);
         Insert(command);
     }
 
     public void InsertTask(Task task)
     {
         var command =
-            new SQLiteCommand("INSERT INTO tasks (user_id, title, description, date, due_date) VALUES (?,?,?,?,?)");
-        command.Parameters.AddWithValue("user_id", task.UserId);
-        command.Parameters.AddWithValue("title", task.Title);
-        command.Parameters.AddWithValue("description", task.Description);
-        command.Parameters.AddWithValue("date", task.Date);
-        command.Parameters.AddWithValue("due_date", task.DueDate);
+            new SQLiteCommand(
+                "INSERT INTO tasks (user_id, title, description, date, due_date) VALUES (@user_id, @title, @description, @date, @due_date)");
+        command.Parameters.AddWithValue("@user_id", task.UserId);
+        command.Parameters.AddWithValue("@title", task.Title);
+        command.Parameters.AddWithValue("@description", task.Description);
+        command.Parameters.AddWithValue("@date", task.Date);
+        command.Parameters.AddWithValue("@due_date", task.DueDate);
         Insert(command);
     }
 
