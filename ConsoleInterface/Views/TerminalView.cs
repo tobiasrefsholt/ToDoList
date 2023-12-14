@@ -7,6 +7,7 @@ public class TerminalView
 {
     public void ShowMainMenu(User user)
     {
+        Console.Clear();
         Console.WriteLine("\n\nChoose what to do:");
         Console.WriteLine("(1) Show today's tasks");
         Console.WriteLine("(2) Show finished tasks");
@@ -57,17 +58,23 @@ public class TerminalView
     private void ShowAddTask(User user)
     {
         Console.Clear();
-        Console.WriteLine("Add task:");
+        Console.WriteLine("Add new task:");
+        
         var title = UserInput.AskForString("Title: ", true);
         var description = UserInput.AskForString("Description: ", false);
-        var dueDateInput = UserInput.AskForString("Due date (yyyy-mm-dd)", false);
-        DateTime? dueDate = (dueDateInput.Length == 10) ? Convert.ToDateTime(dueDateInput) : null;
-        Console.WriteLine(
-            $"Do you want to add a task with title \"{title}\", description \"{description}\" and due date \"{dueDate}\"?");
-        var addTask = UserInput.AskForBool("Continue?");
-        if (!addTask || user.UserId == null) return;
-        var db = new Database();
-        db.InsertTask(new Task(user.UserId.Value, title, description, dueDate));
+        var dueDate = UserInput.AskForDate("Due date", true);
+        var task = new Task((int)user.UserId!, title, description, dueDate);
+
+        if(!ShowConfirmationAddTask(task)) return;
+
+        var database = new Database();
+        database.InsertTask(task);
+    }
+
+    private static bool ShowConfirmationAddTask(Task task)
+    {
+        return UserInput.AskForBool(
+            $"Do you want to add a task with title \"{task.Title}\", description \"{task.Description}\" and due date \"{task.DueDate}\"? (Y/n)");
     }
 
     private void ShowManageAccount()
