@@ -10,17 +10,4 @@ public class TodoTask
     public string Description { get; init; }
     public DateTime Date { get; init; }
     public DateTime? DueDate { get; init; }
-
-    public TodoTask(int userId, string title, string description, DateTime? dueDate = null)
-    {
-        UserId = userId;
-        Title = title;
-        Description = description;
-        Date = DateTime.Now;
-        DueDate = dueDate;
-    }
-
-    public TodoTask()
-    {
-    }
 }

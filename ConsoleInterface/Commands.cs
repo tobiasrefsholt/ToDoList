@@ -73,7 +73,13 @@ public class Commands
         var title = UserInput.AskForString("Title: ", true);
         var description = UserInput.AskForString("Description: ", false);
         var dueDate = UserInput.AskForDate("Due date", true);
-        var task = new TodoTask((int)_user.UserId!, title, description, dueDate);
+        var task = new TodoTask()
+        {
+            UserId = (int)_user.UserId!,
+            Title = title,
+            Description = description,
+            DueDate = dueDate
+        };
 
         if (!ShowConfirmationAddTask(task)) return;
 
