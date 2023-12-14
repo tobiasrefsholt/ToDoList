@@ -1,14 +1,17 @@
 ﻿using ConsoleInterface;
 using ToDoList;
 
-var database = new Database();
 var user = new User();
 var terminal = new TerminalView();
 
 while (!user.IsAuthenticated)
 {
     user.ShowLoginPrompt();
-    user.Authenticate(database);
+    user.Authenticate();
+    user.ShowAuthenticationResult();
 }
 
-terminal.ShowMainMenu(user);
+while (user.IsAuthenticated)
+{
+    terminal.ShowMainMenu(user);
+}
