@@ -2,24 +2,32 @@ namespace ToDoList;
 
 public class User
 {
-    private string? _username;
+    public string? Username { get; private set; }
     private string? _password;
     public bool IsAuthenticated { get; private set; }
     public int? UserId { get; private set; }
 
-    public void Authenticate(Database database)
+    public void Authenticate()
     {
-        if (_username != null && _password != null)
+        if (Username == null || _password == null)
         {
-            UserId = database.GetIdByUsername(_username);
-            var hash = database.GetPasswordHash(_username);
-            IsAuthenticated = !string.IsNullOrEmpty(hash) && PasswordHash.ValidatePassword(_password, hash);
+            IsAuthenticated = false;
+            return;
         }
 
+        var database = new Database();
+        UserId = database.GetIdByUsername(Username);
+        var hash = database.GetPasswordHash(Username);
+        IsAuthenticated = !string.IsNullOrEmpty(hash) && PasswordHash.ValidatePassword(_password, hash);
+        ShowAuthenticationResult();
+    }
+
+    public void ShowAuthenticationResult()
+    {
         Console.Clear();
         if (IsAuthenticated)
         {
-            Console.WriteLine($"Hello, {_username}. You're logged in!");
+            Console.WriteLine($"Hello, {Username}. You're logged in!");
             return;
         }
 
@@ -29,10 +37,10 @@ public class User
     private void CreateUser()
     {
         var dbInstance = new Database();
-        if (_username == null || _password == null) return;
+        if (Username == null || _password == null) return;
         var hash = PasswordHash.CreateHash(_password);
-        dbInstance.InsertUser(_username, hash);
-        UserId = dbInstance.GetIdByUsername(_username);
+        dbInstance.InsertUser(Username, hash);
+        UserId = dbInstance.GetIdByUsername(Username);
         IsAuthenticated = true;
     }
 
@@ -53,10 +61,10 @@ public class User
     {
         Console.WriteLine("Register account");
         Console.Write("Create Username: ");
-        _username = Console.ReadLine();
+        Username = Console.ReadLine();
         Console.Write("Create Password: ");
         _password = Console.ReadLine();
-        if (_username == null || _password == null)
+        if (Username == null || _password == null)
         {
             Console.WriteLine("Please enter a username and password");
             return;
@@ -69,7 +77,7 @@ public class User
     {
         Console.WriteLine("Please login");
         Console.Write("Username: ");
-        _username = Console.ReadLine();
+        Username = Console.ReadLine();
         Console.Write("Password: ");
         _password = Console.ReadLine();
     }
@@ -78,7 +86,7 @@ public class User
     {
         IsAuthenticated = false;
         UserId = null;
-        _username = null;
+        Username = null;
         _password = null;
     }
 }
