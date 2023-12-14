@@ -3,17 +3,19 @@ using ConsoleInterface;
 
 var user = new User();
 
-while (!user.IsAuthenticated)
+while (true)
 {
-    user.ShowLoginPrompt();
-    user.Authenticate();
-    user.ShowAuthenticationResult();
-}
-
-var todoList = new ToDoList((int)user.UserId!);
-var commands = new Commands(user, todoList);
-
-while (user.IsAuthenticated)
-{
-    commands.ShowMainMenu();
+    if (user.IsAuthenticated)
+    {
+        var todoList = new ToDoList((int)user.UserId!);
+        var commands = new Commands(user, todoList);
+        commands.ShowMainMenu();
+    }
+    else
+    {
+        user.Logout();
+        user.ShowLoginPrompt();
+        user.Authenticate();
+        user.ShowAuthenticationResult();
+    }
 }

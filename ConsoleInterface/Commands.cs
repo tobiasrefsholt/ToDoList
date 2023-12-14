@@ -16,7 +16,7 @@ public class Commands
     public void ShowMainMenu()
     {
         Console.Clear();
-        Console.WriteLine("\n\nChoose what to do:");
+        Console.WriteLine("Choose what to do:");
         Console.WriteLine("(1) Show today's tasks");
         Console.WriteLine("(2) Show finished tasks");
         Console.WriteLine("(3) Add task");
