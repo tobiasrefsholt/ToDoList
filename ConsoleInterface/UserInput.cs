@@ -42,4 +42,23 @@ public class UserInput
         var input = Console.ReadLine();
         return string.IsNullOrEmpty(input) || input.ToLower() == "y";
     }
+
+    public static DateOnly? AskForDate(string label, bool required)
+    {
+        var input = AskForString(label + " (yyyy-mm-dd)", false);
+        if (!required && string.IsNullOrEmpty(input)) return null;
+        
+        try
+        {
+            if (string.IsNullOrEmpty(input))
+                throw new Exception("This field is required, try again!");
+
+            return DateOnly.Parse(input);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return AskForDate(label, required);
+        }
+    }
 }
