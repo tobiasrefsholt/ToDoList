@@ -3,7 +3,7 @@ namespace AppLogic;
 public class ToDoList
 {
     private int _userId;
-    private List<Task> _tasks = new();
+    private List<TodoTask> _tasks = new();
 
     public ToDoList(int userId)
     {

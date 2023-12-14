@@ -74,17 +74,17 @@ public class Database
         Insert(command);
     }
 
-    public void InsertTask(Task task)
+    public void InsertTask(TodoTask todoTask)
     {
         var command = new SQLiteCommand();
         command.CommandText =
             "INSERT INTO tasks (UserId, Title, Description, Date, DueDate) " +
             "VALUES (@UserId, @Title, @Description, @Date, @DueDate)";
-        command.Parameters.AddWithValue("@UserId", task.UserId);
-        command.Parameters.AddWithValue("@Title", task.Title);
-        command.Parameters.AddWithValue("@Description", task.Description);
-        command.Parameters.AddWithValue("@Date", task.Date);
-        command.Parameters.AddWithValue("@DueDate", task.DueDate);
+        command.Parameters.AddWithValue("@UserId", todoTask.UserId);
+        command.Parameters.AddWithValue("@Title", todoTask.Title);
+        command.Parameters.AddWithValue("@Description", todoTask.Description);
+        command.Parameters.AddWithValue("@Date", todoTask.Date);
+        command.Parameters.AddWithValue("@DueDate", todoTask.DueDate);
         Insert(command);
     }
 
@@ -104,10 +104,10 @@ public class Database
         return ReadSingle(command);
     }
 
-    public List<Task> GetTasksForUser(int userId)
+    public List<TodoTask> GetTasksForUser(int userId)
     {
         const string sql = "SELECT * FROM tasks WHERE UserId LIKE @UserId";
         using var connection = new SQLiteConnection(ConnectionString);
-        return connection.Query<Task>(sql, new { UserId = userId }).ToList();
+        return connection.Query<TodoTask>(sql, new { UserId = userId }).ToList();
     }
 }

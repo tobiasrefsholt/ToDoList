@@ -1,5 +1,4 @@
 using AppLogic;
-using Task = AppLogic.Task;
 
 namespace ConsoleInterface;
 
@@ -74,7 +73,7 @@ public class Commands
         var title = UserInput.AskForString("Title: ", true);
         var description = UserInput.AskForString("Description: ", false);
         var dueDate = UserInput.AskForDate("Due date", true);
-        var task = new Task((int)_user.UserId!, title, description, dueDate);
+        var task = new TodoTask((int)_user.UserId!, title, description, dueDate);
 
         if (!ShowConfirmationAddTask(task)) return;
 
@@ -82,7 +81,7 @@ public class Commands
         database.InsertTask(task);
     }
 
-    private static bool ShowConfirmationAddTask(Task task)
+    private static bool ShowConfirmationAddTask(TodoTask task)
     {
         return UserInput.AskForBool(
             $"Do you want to add a task with title \"{task.Title}\", description \"{task.Description}\" and due date \"{task.DueDate}\"? (Y/n)");

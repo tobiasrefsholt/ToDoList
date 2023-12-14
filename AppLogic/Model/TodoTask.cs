@@ -3,7 +3,7 @@ using System.Data.SQLite;
 
 namespace AppLogic;
 
-public class Task
+public class TodoTask
 {
     public int UserId { get; init; }
     public string Title { get; init; }
@@ -11,7 +11,7 @@ public class Task
     public DateTime Date { get; init; }
     public DateTime? DueDate { get; init; }
 
-    public Task(int userId, string title, string description, DateTime? dueDate = null)
+    public TodoTask(int userId, string title, string description, DateTime? dueDate = null)
     {
         UserId = userId;
         Title = title;
@@ -20,7 +20,7 @@ public class Task
         DueDate = dueDate;
     }
 
-    public Task()
+    public TodoTask()
     {
     }
 }
