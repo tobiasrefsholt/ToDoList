@@ -1,4 +1,4 @@
-namespace ToDoList;
+namespace AppLogic;
 
 public class User
 {

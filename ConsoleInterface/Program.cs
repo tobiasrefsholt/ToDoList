@@ -1,8 +1,7 @@
-﻿using ConsoleInterface;
-using ToDoList;
+﻿using AppLogic;
+using ConsoleInterface;
 
 var user = new User();
-var terminal = new TerminalView();
 
 while (!user.IsAuthenticated)
 {
@@ -11,7 +10,10 @@ while (!user.IsAuthenticated)
     user.ShowAuthenticationResult();
 }
 
+var todoList = new ToDoList((int)user.UserId!);
+var commands = new Commands(user, todoList);
+
 while (user.IsAuthenticated)
 {
-    terminal.ShowMainMenu(user);
+    commands.ShowMainMenu();
 }

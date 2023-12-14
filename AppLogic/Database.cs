@@ -1,7 +1,7 @@
-using System.Data;
 using System.Data.SQLite;
+using Dapper;
 
-namespace ToDoList;
+namespace AppLogic;
 
 public class Database
 {
@@ -19,7 +19,7 @@ public class Database
         var tasksTableSql = new SQLiteCommand();
         tasksTableSql.CommandText =
             "CREATE TABLE IF NOT EXISTS tasks " +
-            "(user_id INT, title VARCHAR(255), description VARCHAR(255), date DATETIME, due_date DATETIME)";
+            "(UserId INT, Title VARCHAR(255), Description VARCHAR(255), Date DATETIME, DueDate DATETIME)";
         Insert(usersTableSql);
         Insert(tasksTableSql);
     }
@@ -33,7 +33,7 @@ public class Database
         command.Dispose();
     }
 
-    private string Read(SQLiteCommand command)
+    private string ReadSingle(SQLiteCommand command)
     {
         using var connection = new SQLiteConnection(ConnectionString);
         connection.Open();
@@ -78,13 +78,13 @@ public class Database
     {
         var command = new SQLiteCommand();
         command.CommandText =
-            "INSERT INTO tasks (user_id, title, description, date, due_date) " +
-            "VALUES (@user_id, @title, @description, @date, @due_date)";
-        command.Parameters.AddWithValue("@user_id", task.UserId);
-        command.Parameters.AddWithValue("@title", task.Title);
-        command.Parameters.AddWithValue("@description", task.Description);
-        command.Parameters.AddWithValue("@date", task.Date);
-        command.Parameters.AddWithValue("@due_date", task.DueDate);
+            "INSERT INTO tasks (UserId, Title, Description, Date, DueDate) " +
+            "VALUES (@UserId, @Title, @Description, @Date, @DueDate)";
+        command.Parameters.AddWithValue("@UserId", task.UserId);
+        command.Parameters.AddWithValue("@Title", task.Title);
+        command.Parameters.AddWithValue("@Description", task.Description);
+        command.Parameters.AddWithValue("@Date", task.Date);
+        command.Parameters.AddWithValue("@DueDate", task.DueDate);
         Insert(command);
     }
 
@@ -101,6 +101,13 @@ public class Database
         var command = new SQLiteCommand();
         command.CommandText = "SELECT password FROM users WHERE username LIKE @username";
         command.Parameters.AddWithValue("@username", username);
-        return Read(command);
+        return ReadSingle(command);
+    }
+
+    public List<Task> GetTasksForUser(int userId)
+    {
+        const string sql = "SELECT * FROM tasks WHERE UserId LIKE @UserId";
+        using var connection = new SQLiteConnection(ConnectionString);
+        return connection.Query<Task>(sql, new { UserId = userId }).ToList();
     }
 }

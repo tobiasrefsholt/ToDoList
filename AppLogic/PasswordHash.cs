@@ -1,8 +1,6 @@
-using System;
-using System.Text;
 using System.Security.Cryptography;
 
-namespace ToDoList;
+namespace AppLogic;
 
 public class PasswordHash
 {

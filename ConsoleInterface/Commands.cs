@@ -1,11 +1,20 @@
-using ToDoList;
-using Task = ToDoList.Task;
+using AppLogic;
+using Task = AppLogic.Task;
 
 namespace ConsoleInterface;
 
-public class TerminalView
+public class Commands
 {
-    public void ShowMainMenu(User user)
+    private readonly User _user;
+    private readonly ToDoList _toDoList;
+
+    public Commands(User user, ToDoList toDoList)
+    {
+        _user = user;
+        _toDoList = toDoList;
+    }
+
+    public void ShowMainMenu()
     {
         Console.Clear();
         Console.WriteLine("\n\nChoose what to do:");
@@ -15,10 +24,10 @@ public class TerminalView
         Console.WriteLine("(4) Manage Account");
         Console.WriteLine("(5) Log out");
         var selected = UserInput.AskForInt();
-        SelectMenuItem(selected, user);
+        SelectMenuItem(selected);
     }
 
-    private void SelectMenuItem(int selected, User user)
+    private void SelectMenuItem(int selected)
     {
         switch (selected)
         {
@@ -29,25 +38,27 @@ public class TerminalView
                 ShowFinishedTasks();
                 break;
             case 3:
-                ShowAddTask(user);
+                ShowAddTask();
                 break;
             case 4:
                 ShowManageAccount();
                 break;
             case 5:
-                user.Logout();
+                _user.Logout();
                 Console.Clear();
                 Console.WriteLine("Successfully logged out.");
                 break;
             default:
-                ShowMainMenu(user);
+                ShowMainMenu();
                 break;
         }
     }
 
     private void ShowTodaysTasks()
     {
-        throw new NotImplementedException();
+        Console.Clear();
+        Console.WriteLine("Todays tasks: \n");
+        _toDoList.ShowTodaysTasks();
     }
 
     private void ShowFinishedTasks()
@@ -55,17 +66,17 @@ public class TerminalView
         throw new NotImplementedException();
     }
 
-    private void ShowAddTask(User user)
+    private void ShowAddTask()
     {
         Console.Clear();
         Console.WriteLine("Add new task:");
-        
+
         var title = UserInput.AskForString("Title: ", true);
         var description = UserInput.AskForString("Description: ", false);
         var dueDate = UserInput.AskForDate("Due date", true);
-        var task = new Task((int)user.UserId!, title, description, dueDate);
+        var task = new Task((int)_user.UserId!, title, description, dueDate);
 
-        if(!ShowConfirmationAddTask(task)) return;
+        if (!ShowConfirmationAddTask(task)) return;
 
         var database = new Database();
         database.InsertTask(task);
