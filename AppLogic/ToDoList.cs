@@ -2,23 +2,21 @@ namespace AppLogic;
 
 public class ToDoList
 {
-    private int _userId;
     private List<TodoTask> _tasks = new();
 
-    public ToDoList(int userId)
-    {
-        _userId = userId;
-        FetchTasks();
-    }
-
-    private void FetchTasks()
+    public void FetchRemainingTasks(int userId)
     {
         var database = new Database();
-        _tasks = database.GetTasksForUser(_userId);
+        _tasks = database.GetTasksForUser(userId);
     }
 
-    public void ShowTodaysTasks()
+    public List<TodoTask> GetTaskList()
     {
         throw new NotImplementedException();
+    }
+    
+    public TodoTask GetTask(int index)
+    {
+        return _tasks[index];
     }
 }

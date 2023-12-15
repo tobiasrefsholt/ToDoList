@@ -1,5 +1,6 @@
 ﻿using AppLogic;
 using ConsoleInterface;
+using ConsoleInterface.CommandMenus;
 
 var user = new User();
 
@@ -7,9 +8,8 @@ while (true)
 {
     if (user.IsAuthenticated)
     {
-        var todoList = new ToDoList((int)user.UserId!);
-        var commands = new Commands(user, todoList);
-        commands.ShowMainMenu();
+        var mainMenu = new MainMenu(user);
+        mainMenu.Run();
     }
     else
     {

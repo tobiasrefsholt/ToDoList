@@ -1,11 +1,13 @@
 using System.Data.SQLite;
+using System.Net.NetworkInformation;
 using Dapper;
 
 namespace AppLogic;
 
 public class Database
 {
-    private const string ConnectionString = "Data Source=database.db;Version=3;New=True;Compress=True;";
+    private const Environment.SpecialFolder DataDir = Environment.SpecialFolder.ApplicationData;
+    private readonly string _connectionString = $"Data Source={DataDir}database.db;Version=3;New=True;Compress=True;";
 
     public Database()
     {
@@ -26,7 +28,7 @@ public class Database
 
     private void Insert(SQLiteCommand command)
     {
-        using var connection = new SQLiteConnection(ConnectionString);
+        using var connection = new SQLiteConnection(_connectionString);
         connection.Open();
         command.Connection = connection;
         command.ExecuteNonQuery();
@@ -35,7 +37,7 @@ public class Database
 
     private string ReadSingle(SQLiteCommand command)
     {
-        using var connection = new SQLiteConnection(ConnectionString);
+        using var connection = new SQLiteConnection(_connectionString);
         connection.Open();
         command.Connection = connection;
         using var dataReader = command.ExecuteReader();
@@ -51,7 +53,7 @@ public class Database
 
     private int? ReadInt(SQLiteCommand command)
     {
-        using var connection = new SQLiteConnection(ConnectionString);
+        using var connection = new SQLiteConnection(_connectionString);
         connection.Open();
         command.Connection = connection;
         using var dataReader = command.ExecuteReader();
@@ -107,7 +109,7 @@ public class Database
     public List<TodoTask> GetTasksForUser(int userId)
     {
         const string sql = "SELECT * FROM tasks WHERE UserId LIKE @UserId";
-        using var connection = new SQLiteConnection(ConnectionString);
+        using var connection = new SQLiteConnection(_connectionString);
         return connection.Query<TodoTask>(sql, new { UserId = userId }).ToList();
     }
 }
