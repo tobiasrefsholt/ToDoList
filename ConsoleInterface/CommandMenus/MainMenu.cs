@@ -15,17 +15,5 @@ public class MainMenu(User currentUser) : Menu(
     "Main menu:"
 )
 {
-    public override void Run()
-    {
-        if (currentUser.IsAuthenticated) ShowMenu();
-    }
-
-    private void ShowMenu()
-    {
-        Console.Clear();
-        Console.WriteLine(Description);
-        ShowCommands();
-        var command = FindCommand(GetInput());
-        command?.Run();
-    }
+    
 }

@@ -13,9 +13,7 @@ while (true)
     }
     else
     {
-        user.Logout();
-        user.ShowLoginPrompt();
-        user.Authenticate();
-        user.ShowAuthenticationResult();
+        var loginMenu = new LoginMenu(user);
+        loginMenu.Run();
     }
 }

@@ -6,11 +6,12 @@ namespace AppLogic;
 
 public class Database
 {
-    private const Environment.SpecialFolder DataDir = Environment.SpecialFolder.ApplicationData;
-    private readonly string _connectionString = $"Data Source={DataDir}database.db;Version=3;New=True;Compress=True;";
+    private readonly string _dbPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/todolist.db";
+    private readonly string _connectionString;
 
     public Database()
     {
+        _connectionString = $"Data Source={_dbPath};Version=3;New=True;Compress=True;";
         InitializeTables();
     }
 
@@ -98,17 +99,17 @@ public class Database
         return ReadInt(command);
     }
 
-    public string GetPasswordHash(string username)
+    public string GetPasswordHash(int userId)
     {
         var command = new SQLiteCommand();
-        command.CommandText = "SELECT password FROM users WHERE username LIKE @username";
-        command.Parameters.AddWithValue("@username", username);
+        command.CommandText = "SELECT password FROM users WHERE rowid LIKE @userId";
+        command.Parameters.AddWithValue("@userId", userId);
         return ReadSingle(command);
     }
 
     public List<TodoTask> GetTasksForUser(int userId)
     {
-        const string sql = "SELECT * FROM tasks WHERE UserId LIKE @UserId";
+        const string sql = "SELECT * FROM tasks WHERE rowid LIKE @UserId";
         using var connection = new SQLiteConnection(_connectionString);
         return connection.Query<TodoTask>(sql, new { UserId = userId }).ToList();
     }

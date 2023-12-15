@@ -5,22 +5,27 @@ namespace ConsoleInterface.CommandMenus;
 
 public abstract class Menu(List<Command> commands, string description)
 {
-    protected readonly string Description = description;
+    public void Run()
+    {
+        Console.Clear();
+        Console.WriteLine(description);
+        ShowCommands();
+        var command = FindCommand(GetInput());
+        command?.Run();
+    }
 
-    public abstract void Run();
-
-    protected ConsoleKey GetInput()
+    private ConsoleKey GetInput()
     {
         Console.WriteLine("Choose an option: ");
         return Console.ReadKey().Key;
     }
 
-    protected void ShowCommands()
+    private void ShowCommands()
     {
         commands.ForEach(command => command.Show());
     }
 
-    protected Command? FindCommand(ConsoleKey key)
+    private Command? FindCommand(ConsoleKey key)
     {
         return commands.FirstOrDefault(command => command.IsKeyCorrect(key));
     }
