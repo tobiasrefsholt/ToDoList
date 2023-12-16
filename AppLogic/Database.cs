@@ -18,7 +18,7 @@ public class Database
     private void InitializeTables()
     {
         var usersTableSql = new SQLiteCommand();
-        usersTableSql.CommandText = "CREATE TABLE IF NOT EXISTS users (username VARCHAR(255), password VARCHAR(255))";
+        usersTableSql.CommandText = "CREATE TABLE IF NOT EXISTS users (username VARCHAR(255), password VARCHAR(255), UNIQUE (username))";
         var tasksTableSql = new SQLiteCommand();
         tasksTableSql.CommandText =
             "CREATE TABLE IF NOT EXISTS tasks " +
@@ -92,7 +92,7 @@ public class Database
         Insert(command);
     }
 
-    public int? GetIdByUsername(string username)
+    public int? GetUserId(string username)
     {
         var command = new SQLiteCommand();
         command.CommandText = "SELECT rowid FROM users WHERE username LIKE @username";

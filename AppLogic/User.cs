@@ -15,7 +15,7 @@ public class User
         }
 
         var database = new Database();
-        var userId = database.GetIdByUsername(username);
+        var userId = database.GetUserId(username);
         if (userId == null) return;
 
         var hash = database.GetPasswordHash((int)userId);
