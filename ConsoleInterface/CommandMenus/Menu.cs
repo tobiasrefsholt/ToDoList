@@ -16,8 +16,10 @@ public abstract class Menu(List<Command> commands, string description)
 
     private ConsoleKey GetInput()
     {
-        Console.WriteLine("Choose an option: ");
-        return Console.ReadKey().Key;
+        Console.Write("Choose an option: ");
+        var input = Console.ReadKey().Key;
+        Console.WriteLine();
+        return input;
     }
 
     private void ShowCommands()

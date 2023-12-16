@@ -15,15 +15,18 @@ public class UserLogin(ConsoleKey key, User user) : Command(key, "Login")
         Console.Clear();
         if (user.IsAuthenticated)
         {
-            Console.WriteLine($"Hello, {user.Username}. You're logged in!");
+            Console.WriteLine($"Hello, {user.Username}. You're logged in! Press any key to continue...");
+            Console.ReadKey();
             return;
         }
 
-        Console.WriteLine("Wrong username or password. Try again or create an account.");
+        Console.WriteLine("Wrong username or password. Try again or create an account. Press any key to continue...");
+        Console.ReadKey();
     }
 
     private void ShowLoginPrompt()
     {
+        Console.Clear();
         Console.WriteLine("Please login");
         Console.Write("Username: ");
         var username = Console.ReadLine();
