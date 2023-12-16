@@ -22,7 +22,7 @@ public class Database
         var tasksTableSql = new SQLiteCommand();
         tasksTableSql.CommandText =
             "CREATE TABLE IF NOT EXISTS tasks " +
-            "(UserId INT, Title VARCHAR(255), Description VARCHAR(255), Date DATETIME, DueDate DATETIME)";
+            "(UserId INT, Title VARCHAR(255), Description VARCHAR(255), Date DATETIME, DueDate DATETIME, IsDone BOOL)";
         Insert(usersTableSql);
         Insert(tasksTableSql);
     }
@@ -81,13 +81,14 @@ public class Database
     {
         var command = new SQLiteCommand();
         command.CommandText =
-            "INSERT INTO tasks (UserId, Title, Description, Date, DueDate) " +
-            "VALUES (@UserId, @Title, @Description, @Date, @DueDate)";
+            "INSERT INTO tasks (UserId, Title, Description, Date, DueDate, IsDone) " +
+            "VALUES (@UserId, @Title, @Description, @Date, @DueDate, @IsDone)";
         command.Parameters.AddWithValue("@UserId", todoTask.UserId);
         command.Parameters.AddWithValue("@Title", todoTask.Title);
         command.Parameters.AddWithValue("@Description", todoTask.Description);
         command.Parameters.AddWithValue("@Date", todoTask.Date);
         command.Parameters.AddWithValue("@DueDate", todoTask.DueDate);
+        command.Parameters.AddWithValue("@IsDone", todoTask.IsDone);
         Insert(command);
     }
 

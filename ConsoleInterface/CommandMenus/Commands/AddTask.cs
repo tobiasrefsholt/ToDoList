@@ -27,7 +27,8 @@ public class AddTask(ConsoleKey key, User user) : Command(key, "Add task")
             UserId = (int)user.UserId!,
             Title = title,
             Description = description,
-            DueDate = dueDate
+            DueDate = dueDate,
+            IsDone = false
         };
         return task;
     }
