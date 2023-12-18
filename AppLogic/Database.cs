@@ -108,10 +108,10 @@ public class Database
         return ReadSingle(command);
     }
 
-    public List<TodoTask> GetTasksForUser(int userId)
+    public List<TodoTask> GetTasksForUser(int userId, bool isDone)
     {
-        const string sql = "SELECT * FROM tasks WHERE rowid LIKE @UserId";
+        const string sql = "SELECT * FROM tasks WHERE UserId LIKE @UserId AND IsDone LIKE @IsDone ORDER BY IsDone desc";
         using var connection = new SQLiteConnection(_connectionString);
-        return connection.Query<TodoTask>(sql, new { UserId = userId }).ToList();
+        return connection.Query<TodoTask>(sql, new { UserId = userId, IsDone = isDone }).ToList();
     }
 }

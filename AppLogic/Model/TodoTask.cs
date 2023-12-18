@@ -9,7 +9,7 @@ public class TodoTask
     public string Title { get; init; }
     public string Description { get; init; }
     public DateTime Date { get; init; }
-    public DateTime? DueDate { get; init; }
+    public DateTime DueDate { get; init; }
     
     public bool IsDone { get; init; }
 }

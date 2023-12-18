@@ -1,6 +1,6 @@
 namespace ConsoleInterface;
 
-public class UserInput
+public static class UserInput
 {
     public static int AskForInt()
     {
@@ -43,10 +43,9 @@ public class UserInput
         return string.IsNullOrEmpty(input) || input.ToLower() == "y";
     }
 
-    public static DateTime? AskForDate(string label, bool required)
+    public static DateTime AskForDate(string label)
     {
         var input = AskForString(label + " (yyyy-mm-dd)", false);
-        if (!required && string.IsNullOrEmpty(input)) return null;
         
         try
         {
@@ -58,7 +57,7 @@ public class UserInput
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return AskForDate(label, required);
+            return AskForDate(label);
         }
     }
 }

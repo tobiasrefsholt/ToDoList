@@ -21,7 +21,7 @@ public class AddTask(ConsoleKey key, User user) : Command(key, "Add task")
     {
         var title = UserInput.AskForString("Title: ", true);
         var description = UserInput.AskForString("Description: ", false);
-        var dueDate = UserInput.AskForDate("Due date", true);
+        var dueDate = UserInput.AskForDate("Due date");
         var task = new TodoTask()
         {
             UserId = (int)user.UserId!,
