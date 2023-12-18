@@ -114,4 +114,13 @@ public class Database
         using var connection = new SQLiteConnection(_connectionString);
         return connection.Query<TodoTask>(sql, new { UserId = userId, IsDone = isDone }).ToList();
     }
+
+    public List<TodoTask> GetTasksForUserByDate(int userId, string isoDate)
+    {
+        const string sql = "SELECT rowid, UserId, Title, Description, Date, DueDate, IsDone FROM tasks " +
+                           "WHERE UserId LIKE @UserId AND DATE(`DueDate`) = @IsoDate " +
+                           "ORDER BY IsDone desc, DueDate";
+        using var connection = new SQLiteConnection(_connectionString);
+        return connection.Query<TodoTask>(sql, new { UserId = userId, IsoDate = isoDate }).ToList();
+    }
 }
