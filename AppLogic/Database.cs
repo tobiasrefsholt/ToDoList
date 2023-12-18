@@ -27,7 +27,7 @@ public class Database
         Insert(tasksTableSql);
     }
 
-    private void Insert(SQLiteCommand command)
+    public void Insert(SQLiteCommand command)
     {
         using var connection = new SQLiteConnection(_connectionString);
         connection.Open();
@@ -110,7 +110,7 @@ public class Database
 
     public List<TodoTask> GetTasksForUser(int userId, bool isDone)
     {
-        const string sql = "SELECT * FROM tasks WHERE UserId LIKE @UserId AND IsDone LIKE @IsDone ORDER BY IsDone desc, DueDate";
+        const string sql = "SELECT rowid, UserId, Title, Description, Date, DueDate, IsDone FROM tasks WHERE UserId LIKE @UserId AND IsDone LIKE @IsDone ORDER BY IsDone desc, DueDate";
         using var connection = new SQLiteConnection(_connectionString);
         return connection.Query<TodoTask>(sql, new { UserId = userId, IsDone = isDone }).ToList();
     }

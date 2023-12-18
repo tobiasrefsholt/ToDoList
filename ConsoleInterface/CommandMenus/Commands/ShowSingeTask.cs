@@ -9,6 +9,11 @@ public class ShowSingeTask(ToDoList toDoList)
     public void Run()
     {
         SelectTask();
+        Run(_selectedTask);
+    }
+
+    public void Run(TodoTask? selectedTask)
+    {
         if (_selectedTask == null) return;
         PrintTaskDetails();
         var taskMenu = new TaskMenu(toDoList, _selectedTask);
@@ -18,6 +23,7 @@ public class ShowSingeTask(ToDoList toDoList)
     private void PrintTaskDetails()
     {
         Console.Clear();
+        Console.WriteLine("Id: " + _selectedTask.RowId);
         Console.WriteLine("Title: " + _selectedTask.Title);
         Console.WriteLine("Description: " + _selectedTask.Description);
         Console.WriteLine("Date added: " + _selectedTask.Date);
