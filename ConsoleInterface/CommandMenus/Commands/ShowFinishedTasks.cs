@@ -6,6 +6,8 @@ public class ShowFinishedTasks(ConsoleKey key, User user) : Command(key, "Show f
 {
     public override void Run()
     {
-        throw new NotImplementedException();
+        var toDoList = new ToDoList((int)user.UserId!);
+        toDoList.FetchFinishedTasks();
+        TasksView.Menu(toDoList.GetTaskList(), "Finished tasks");
     }
 }
