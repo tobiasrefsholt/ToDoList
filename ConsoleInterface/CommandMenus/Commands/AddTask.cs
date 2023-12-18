@@ -27,6 +27,7 @@ public class AddTask(ConsoleKey key, User user) : Command(key, "Add task")
             UserId = (int)user.UserId!,
             Title = title,
             Description = description,
+            Date = DateTime.Now,
             DueDate = dueDate,
             IsDone = false
         };
@@ -36,6 +37,6 @@ public class AddTask(ConsoleKey key, User user) : Command(key, "Add task")
     private static bool ShowConfirmationAddTask(TodoTask task)
     {
         return UserInput.AskForBool(
-            $"Do you want to add a task with title \"{task.Title}\", description \"{task.Description}\" and due date \"{task.DueDate}\"? (Y/n)");
+            $"Do you want to add a task with title \"{task.Title}\", description \"{task.Description}\" and due date \"{task.DueDate}\"?");
     }
 }
