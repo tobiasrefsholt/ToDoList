@@ -1,11 +1,14 @@
+using ConsoleInterface.CommandMenus;
+
 namespace ConsoleInterface;
 
 public static class UserInput
 {
-    public static int AskForInt()
+    public static int? AskForInt()
     {
         Console.Write("Type a number: ");
         var input = Console.ReadLine();
+        if (string.IsNullOrEmpty(input)) return null;
         var result = 0;
         try
         {
@@ -18,6 +21,19 @@ public static class UserInput
         }
 
         return result;
+    }
+
+    public static int? AskForInt(int min, int max)
+    {
+        var number = AskForInt();
+        if (number == null) return null;
+        while (number < min || number > max)
+        {
+            Console.Write($"Number is out of range ({min} - {max})");
+            number = AskForInt();
+        }
+
+        return number;
     }
 
     public static string AskForString(string label, bool required)

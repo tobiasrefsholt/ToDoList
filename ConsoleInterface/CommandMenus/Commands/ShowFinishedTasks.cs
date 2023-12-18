@@ -8,6 +8,9 @@ public class ShowFinishedTasks(ConsoleKey key, User user) : Command(key, "Show f
     {
         var toDoList = new ToDoList((int)user.UserId!);
         toDoList.FetchFinishedTasks();
-        TasksView.Menu(toDoList.GetTaskList(), "Finished tasks");
+        var tasks = toDoList.GetTaskList();
+        TasksView.ViewAll(tasks, "Remaining tasks");
+        var singeTask = new ShowSingeTask(toDoList);
+        singeTask.Run();
     }
 }

@@ -5,7 +5,8 @@ namespace ConsoleInterface.CommandMenus;
 
 public abstract class Menu(List<Command> commands, string description)
 {
-    public void Run()
+
+    public virtual void Run()
     {
         Console.Clear();
         Console.WriteLine(description);
@@ -14,7 +15,7 @@ public abstract class Menu(List<Command> commands, string description)
         command?.Run();
     }
 
-    private ConsoleKey GetInput()
+    protected ConsoleKey GetInput()
     {
         Console.Write("Choose an option: ");
         var input = Console.ReadKey().Key;
@@ -22,12 +23,12 @@ public abstract class Menu(List<Command> commands, string description)
         return input;
     }
 
-    private void ShowCommands()
+    protected void ShowCommands()
     {
         commands.ForEach(command => command.Show());
     }
 
-    private Command? FindCommand(ConsoleKey key)
+    protected Command? FindCommand(ConsoleKey key)
     {
         return commands.FirstOrDefault(command => command.IsKeyCorrect(key));
     }

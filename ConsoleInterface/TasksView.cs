@@ -5,12 +5,11 @@ namespace ConsoleInterface;
 
 public static class TasksView
 {
-    public static void Menu(List<TodoTask> tasks, string title)
+    public static void ViewAll(List<TodoTask> tasks, string title)
     {
         Console.Clear();
         Console.WriteLine($"{title}: \n");
         ListRow(tasks);
-        Console.ReadKey();
     }
 
     private static void ListRow(IReadOnlyList<TodoTask> taskList)
