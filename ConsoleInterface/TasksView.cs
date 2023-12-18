@@ -13,7 +13,7 @@ public static class TasksView
         Console.ReadKey();
     }
 
-    public static void ListRow(List<TodoTask> taskList)
+    private static void ListRow(IReadOnlyList<TodoTask> taskList)
     {
         for (var index = 0; index < taskList.Count; index++)
         {
@@ -37,15 +37,16 @@ public static class TasksView
 
     private static void SetConsoleColors(TodoTask task)
     {
-        if (!task.IsDone && task.DueDate < DateTime.Today)
+        switch (task.IsDone)
         {
-            Console.BackgroundColor = ConsoleColor.Red;
-            Console.ForegroundColor = ConsoleColor.Black;
-        }
-        else
-        {
-            Console.BackgroundColor = ConsoleColor.Green;
-            Console.ForegroundColor = ConsoleColor.Black;
+            case false when task.DueDate < DateTime.Today:
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Black;
+                break;
+            case true:
+                Console.BackgroundColor = ConsoleColor.Green;
+                Console.ForegroundColor = ConsoleColor.Black;
+                break;
         }
     }
 }
