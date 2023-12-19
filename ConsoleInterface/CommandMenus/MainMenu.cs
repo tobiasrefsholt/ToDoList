@@ -11,7 +11,7 @@ public class MainMenu(User currentUser) : Menu(
         new ShowFinishedTasks(ConsoleKey.D3, currentUser),
         new AddTask(ConsoleKey.D4, currentUser),
         new UserSettings(ConsoleKey.D5, currentUser),
-        new UserLogout(ConsoleKey.D6, currentUser),
+        new Exit(ConsoleKey.D6)
     ],
     "Main menu:"
 )

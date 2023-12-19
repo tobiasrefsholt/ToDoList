@@ -6,6 +6,7 @@ public class UserSettings(ConsoleKey key, User user) : Command(key, "User settin
 {
     public override void Run()
     {
-        throw new NotImplementedException();
+        var userMenu = new UserMenu(user);
+        userMenu.Run();
     }
 }

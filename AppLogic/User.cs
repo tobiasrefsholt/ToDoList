@@ -1,3 +1,5 @@
+using System.Data.SQLite;
+
 namespace AppLogic;
 
 public class User
@@ -38,5 +40,30 @@ public class User
         IsAuthenticated = false;
         UserId = null;
         Username = null;
+    }
+
+    public void Delete()
+    {
+        var database = new Database();
+        var sqlCommand = new SQLiteCommand("DELETE FROM users WHERE rowid LIKE @UserId");
+        sqlCommand.Parameters.AddWithValue("@UserId", UserId);
+        database.Insert(sqlCommand);
+    }
+
+    public void ChangePassword(string oldPassword, string newPassword)
+    {
+        Authenticate(Username!, oldPassword);
+        if (!IsAuthenticated) return;
+        SetNewPassword(newPassword);
+    }
+
+    private void SetNewPassword(string newPassword)
+    {
+        var hash = PasswordHash.CreateHash(newPassword);
+        var database = new Database();
+        var sqlCommand = new SQLiteCommand("UPDATE users SET password = @Hash WHERE rowid LIKE @UserId");
+        sqlCommand.Parameters.AddWithValue("@Hash", hash);
+        sqlCommand.Parameters.AddWithValue("@UserId", UserId);
+        database.Insert(sqlCommand);
     }
 }

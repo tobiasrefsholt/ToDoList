@@ -50,4 +50,12 @@ public class ToDoList(int userId)
     {
         return _tasks[index];
     }
+
+    public void RemoveTasksForUser()
+    {
+        var database = new Database();
+        var sqlCommand = new SQLiteCommand("DELETE FROM tasks WHERE UserId LIKE @UserId");
+        sqlCommand.Parameters.AddWithValue("@UserId", userId);
+        database.Insert(sqlCommand);
+    }
 }
