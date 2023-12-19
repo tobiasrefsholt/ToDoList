@@ -15,21 +15,31 @@ public class ToDoList(int userId)
 
     public void FetchRemainingTasks()
     {
+        const string sql = "SELECT rowid, UserId, Title, Description, Date, DueDate, IsDone " +
+                           "FROM tasks WHERE UserId LIKE @UserId AND IsDone LIKE @IsDone ORDER BY IsDone desc, DueDate";
+        var param = new { UserId = userId, IsDone = false };
         var database = new Database();
-        _tasks = database.GetTasksForUser(userId, false);
+        _tasks = database.GetTaskList(sql, param);
     }
 
     public void FetchFinishedTasks()
     {
+        const string sql = "SELECT rowid, UserId, Title, Description, Date, DueDate, IsDone " +
+                           "FROM tasks WHERE UserId LIKE @UserId AND IsDone LIKE @IsDone ORDER BY IsDone desc, DueDate";
+        var param = new { UserId = userId, IsDone = true };
         var database = new Database();
-        _tasks = database.GetTasksForUser(userId, true);
+        _tasks = database.GetTaskList(sql, param);
     }
 
     public void FetchTodaysTasks()
     {
-        var database = new Database();
         var isoDate = DateTime.Today.ToString("yyyy-MM-dd");
-        _tasks = database.GetTasksForUserByDate(userId, isoDate);
+        const string sql = "SELECT rowid, UserId, Title, Description, Date, DueDate, IsDone FROM tasks " +
+                           "WHERE UserId LIKE @UserId AND DATE(`DueDate`) = @IsoDate " +
+                           "ORDER BY IsDone desc, DueDate";
+        var param = new { UserId = userId, IsoDate = isoDate };
+        var database = new Database();
+        _tasks = database.GetTaskList(sql, param);
     }
 
     public List<TodoTask> GetTaskList()
@@ -40,9 +50,9 @@ public class ToDoList(int userId)
     public void DeleteTask(TodoTask task)
     {
         _tasks.Remove(task);
-        var database = new Database();
         var sqlCommand = new SQLiteCommand("DELETE FROM tasks WHERE rowid LIKE @RowId");
         sqlCommand.Parameters.AddWithValue("@RowId", task.RowId);
+        var database = new Database();
         database.Insert(sqlCommand);
     }
 

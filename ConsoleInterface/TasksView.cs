@@ -28,7 +28,7 @@ public static class TasksView
 
         SetConsoleColors(task);
 
-        Console.WriteLine($"({index}) - {task.Title} - {task.Description} - Due: {task.DueDate} - Done: {task.IsDone}");
+        Console.WriteLine($"({index}) - {task.Title} - Due: {task.DueDate} - Done: {task.IsDone}");
 
         Console.BackgroundColor = defaultBackground;
         Console.ForegroundColor = defaultForeground;

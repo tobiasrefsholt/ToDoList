@@ -36,7 +36,7 @@ public class Database
         command.Dispose();
     }
 
-    private string ReadSingle(SQLiteCommand command)
+    public string ReadSingle(SQLiteCommand command)
     {
         using var connection = new SQLiteConnection(_connectionString);
         connection.Open();
@@ -52,7 +52,7 @@ public class Database
         return response;
     }
 
-    private int? ReadInt(SQLiteCommand command)
+    public int? ReadInt(SQLiteCommand command)
     {
         using var connection = new SQLiteConnection(_connectionString);
         connection.Open();
@@ -66,15 +66,6 @@ public class Database
         }
 
         return response;
-    }
-
-    public void InsertUser(string username, string password)
-    {
-        var command = new SQLiteCommand();
-        command.CommandText = "INSERT INTO users (username, password) VALUES (?,?)";
-        command.Parameters.AddWithValue(null, username);
-        command.Parameters.AddWithValue(null, password);
-        Insert(command);
     }
 
     public void InsertTask(TodoTask todoTask)
@@ -92,35 +83,9 @@ public class Database
         Insert(command);
     }
 
-    public int? GetUserId(string username)
+    public List<TodoTask>GetTaskList(string sql, object param)
     {
-        var command = new SQLiteCommand();
-        command.CommandText = "SELECT rowid FROM users WHERE username LIKE @username";
-        command.Parameters.AddWithValue("@username", username);
-        return ReadInt(command);
-    }
-
-    public string GetPasswordHash(int userId)
-    {
-        var command = new SQLiteCommand();
-        command.CommandText = "SELECT password FROM users WHERE rowid LIKE @userId";
-        command.Parameters.AddWithValue("@userId", userId);
-        return ReadSingle(command);
-    }
-
-    public List<TodoTask> GetTasksForUser(int userId, bool isDone)
-    {
-        const string sql = "SELECT rowid, UserId, Title, Description, Date, DueDate, IsDone FROM tasks WHERE UserId LIKE @UserId AND IsDone LIKE @IsDone ORDER BY IsDone desc, DueDate";
         using var connection = new SQLiteConnection(_connectionString);
-        return connection.Query<TodoTask>(sql, new { UserId = userId, IsDone = isDone }).ToList();
-    }
-
-    public List<TodoTask> GetTasksForUserByDate(int userId, string isoDate)
-    {
-        const string sql = "SELECT rowid, UserId, Title, Description, Date, DueDate, IsDone FROM tasks " +
-                           "WHERE UserId LIKE @UserId AND DATE(`DueDate`) = @IsoDate " +
-                           "ORDER BY IsDone desc, DueDate";
-        using var connection = new SQLiteConnection(_connectionString);
-        return connection.Query<TodoTask>(sql, new { UserId = userId, IsoDate = isoDate }).ToList();
+        return connection.Query<TodoTask>(sql, param).ToList();
     }
 }
